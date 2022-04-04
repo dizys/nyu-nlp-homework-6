@@ -72,6 +72,10 @@ class WordFeatures(TypedDict):
     previous_2_biotag: Union[str, None]
     previous_2_word: Union[str, None]
     previous_2_stem: Union[str, None]
+    previous_3_pos: Union[str, None]
+    previous_3_biotag: Union[str, None]
+    previous_3_word: Union[str, None]
+    previous_3_stem: Union[str, None]
     next_pos: Union[str, None]
     next_biotag: Union[str, None]
     next_word: Union[str, None]
@@ -80,6 +84,10 @@ class WordFeatures(TypedDict):
     next_2_biotag: Union[str, None]
     next_2_word: Union[str, None]
     next_2_stem: Union[str, None]
+    next_3_pos: Union[str, None]
+    next_3_biotag: Union[str, None]
+    next_3_word: Union[str, None]
+    next_3_stem: Union[str, None]
     capitalized: bool
     label: Union[str, None]
 
@@ -123,6 +131,17 @@ def get_word_features(sentence: List[Word]) -> List[WordFeatures]:
             previous_2_word_pos = None
             previous_2_word_biotag = None
             previous_2_word_stem = None
+        if i >= 3:
+            previous_3_word = sentence[i-3]
+            previous_3_word_str = previous_3_word["word"]
+            previous_3_word_pos = previous_3_word["pos"]
+            previous_3_word_biotag = previous_3_word["biotag"]
+            previous_3_word_stem = stemmer.stem(previous_3_word_str)
+        else:
+            previous_3_word_str = None
+            previous_3_word_pos = None
+            previous_3_word_biotag = None
+            previous_3_word_stem = None
         if i <= sentence_len - 2:
             next_word = sentence[i+1]
             next_word_str = next_word["word"]
@@ -145,6 +164,17 @@ def get_word_features(sentence: List[Word]) -> List[WordFeatures]:
             next_2_word_pos = None
             next_2_word_biotag = None
             next_2_word_stem = None
+        if i <= sentence_len - 4:
+            next_3_word = sentence[i+3]
+            next_3_word_str = next_3_word["word"]
+            next_3_word_pos = next_3_word["pos"]
+            next_3_word_biotag = next_3_word["biotag"]
+            next_3_word_stem = stemmer.stem(next_3_word_str)
+        else:
+            next_3_word_str = None
+            next_3_word_pos = None
+            next_3_word_biotag = None
+            next_3_word_stem = None
         features = WordFeatures(word=word_str, stem=word_stem, pos=word_pos, biotag=word_biotag,
                                 position=position,
                                 previous_tag=previous_tag,
@@ -156,6 +186,10 @@ def get_word_features(sentence: List[Word]) -> List[WordFeatures]:
                                 previous_2_biotag=previous_2_word_biotag,
                                 previous_2_word=previous_2_word_str,
                                 previous_2_stem=previous_2_word_stem,
+                                previous_3_pos=previous_3_word_pos,
+                                previous_3_biotag=previous_3_word_biotag,
+                                previous_3_word=previous_3_word_str,
+                                previous_3_stem=previous_3_word_stem,
                                 next_pos=next_word_pos,
                                 next_biotag=next_word_biotag,
                                 next_word=next_word_str,
@@ -164,6 +198,10 @@ def get_word_features(sentence: List[Word]) -> List[WordFeatures]:
                                 next_2_biotag=next_2_word_biotag,
                                 next_2_word=next_2_word_str,
                                 next_2_stem=next_2_word_stem,
+                                next_3_pos=next_3_word_pos,
+                                next_3_biotag=next_3_word_biotag,
+                                next_3_word=next_3_word_str,
+                                next_3_stem=next_3_word_stem,
                                 capitalized=word_capitalized,
                                 label=word_label)
         word_features.append(features)
